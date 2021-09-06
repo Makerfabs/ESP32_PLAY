@@ -130,7 +130,7 @@ This routine contains a clock that can be calibrated over WIFI, setting the time
 
 #### Button Function
 
-- L: Change clock mode or mp3 mode.
+- R: Change clock mode or mp3 mode.
 - L: Reset WiFi config.
 - B: Change page(Clock mode)
 - A: Change line(Clock mode)
