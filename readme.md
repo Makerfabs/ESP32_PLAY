@@ -1,4 +1,4 @@
-# ESP32 PLAY (NOT READY)
+# ESP32 PLAY
 
 
 ```c++
