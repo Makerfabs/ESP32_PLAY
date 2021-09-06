@@ -62,181 +62,88 @@ Note that there only the PCBA, USB cable, and SD card, without case and battery,
 
 ### Front:
 
-![front](md_pic/front~1.jpg)
+![front](md_pic/front.jpg)
 
 ### Back:
 
-![back](md_pic/back~1.jpg)
+![back](md_pic/back.jpg)
 
 
 # Example
 
-# 例程
+Some hardware test demos and a NTP clock + MP3 demo.
 
 
 
 ## Equipment list
 
-## 器材清单
-
-- ESP32 Touch Camera ILI9341
+- ESPlay Micro
 - Micro SD card
+- Stereo(3.5mm Audio Cable)
 
 
 ## Compiler Options
-
-## 编译选项和库
 
 **If you have any questions，such as how to install the development board, how to download the code, how to install the library. Please refer to :[Makerfabs_FAQ](https://github.com/Makerfabs/Makerfabs_FAQ)**
 
 - Install board : ESP32 .
 - Install library : Adafruit_GFX library.
 - Install library : Adafruit_ILI9341 library.
-- Install library : Adafruit_STMPE610 library.
+- Install library : PCF8574_library
+- Install library : Adafruit_SGP30
 
-- Insert a Micro SD card into ESP32 Touch Camera.
+- Insert a Micro SD card into ESPlay Micro.
 - Upload codes, select "ESP32 Wrover Module" and "Huge APP"
+- Connect stereo to ESPlay Micro
 
 
 ## Example List
 
-## 例程列表
+### button_test
 
-### Camera
+Simple Demo to test key response. Only L, R and MENU keys are directly connected to the IO pin, other keys are connected through PCF8574.
 
-This is a test demo. You can check that ESP32, screen, touch, SD card reader and the camera function properly.
+### display_test
 
-- Copy logo.bmp to sd card.
-- Insert SD card.
-- Upload code to ESP32.
-- Restart ESP32.
-- Screen will show "TOUCH TO START TEST", please touch screen.
-- Will show logo picture in SD card.
-- And ESP32 will open camera, and show on screen.
+Graph test demo.
 
-### Camera_faster
+### sd_test
 
-Use LovyanGFX library. More faster than Adafruit_GFX. This example don't need SD card.
+Need SD card, use SDIO protocol, not SPI. Use SDMMC library.
 
-- Upload code to ESP32.
-- Restart ESP32.
-- Screen will show "TOUCH TO START TEST", please touch screen.
-- And ESP32 will open camera, and show on screen.
+### audio_test
 
-### Graphic_Test
-
-- Test ILI9341 screen with Adafruit_ILI9341 library.
-
-### Touch_Draw
-
-- Use your hand or stylus (resistance screen) to draw on the screen.
-
-![Touch_Draw](E:/资料储备/git模板/md_pic/draw2~1.jpg)
-
-### SD_Test
-
-- Display pictures from SD card.
-
-![SD2TFT](E:/资料储备/git模板/md_pic/logo~1.jpg)
-
-### Wifi_Camera
-
-- Use esp32 and ov2640 as a webcam.
-- Provides a real-time display of the control web page.
-
-
-
-### Screen Shot Receiver
-
-Transmit the contents of the monitor to the TFT screen via Wifi.A host computer software is provided to box select the areas of the screen that need to be transferred.
-
-Change from [MakePython ESP32 Color LCD で 動画をWiFi受信](https://homemadegarbage.com/makerfabs05)
-
-- Upload codes.
-
-- Open "ScreenShotSender.exe"
-
-- Input IP on the screen.
-
-![SD2TFT](E:/资料储备/git模板/md_pic/ss-1~1.jpg)
-
-- Click "Connect"
-
-![SD2TFT](E:/资料储备/git模板/md_pic/ss-2~1.jpg)
-
-  `
-
-### Album
-
-Read JPG image from SD card and display it on screen.You can switch photos by clicking on the left or right side of the screen.For the sake of display, it is best not to be larger than 320 * 240 pixels.
-
-- Copy the image from the JPG folder to the SD root directory.
-- Insert SD card.
-- Upload code to ESP32.
-- Restart ESP32.
-- Will show jpg picture in SD card.
-
-![album](E:/资料储备/git模板/md_pic/album~1.jpg)
-
-
-
-## Code Explain
-
-## 必要代码说明
-
-- Import Library
+Need SD card and a wav or mp3 file in SD card, need change filename to yours.
 
 ```c++
-#include "SPI.h"
-#include "SD.h"
-#include "FS.h"
-#include "Adafruit_STMPE610.h"
-#include "Adafruit_GFX.h"
-#include "Adafruit_ILI9341.h"
+audio.connecttoFS(SD_MMC, "/yueliang.wav"); //ChildhoodMemory.mp3  //MoonRiver.mp3 //320k_test.mp3
 ```
 
+### i2c_scp30_test
+
+Checking TVOC and eCO2 via SGP30 sensor. Need connect a SGP30 sensor to I2C port.
 
 
-- Define Pins
+### mp3_clock
 
-```c++
-//SPI
-#define SPI_MOSI 13
-#define SPI_MISO 12
-#define SPI_SCK 14
+This routine contains a clock that can be calibrated over WIFI, setting the time zone and alarm clock. And it has MP3 function.
 
-//SD Card
-#define SD_CS 4
+#### Button Function
 
-//Touch Screen
-#define STMPE_CS 2
+- L: Change clock mode or mp3 mode.
+- L: Reset WiFi config.
+- B: Change page(Clock mode)
+- A: Change line(Clock mode)
+- MENU: Add value(Clock mode)
+- UP: Last song(MP3 mode)
+- DOWN: Next song(MP3 mode)
+- STATE: Volume down(MP3 mode)
+- SELECT: Volume up(MP3 mode)
 
-//TFT
-#define TFT_CS 15
-#define TFT_DC 33
-#define TFT_LED -1 //1//-1
-#define TFT_RST -1 //3//-1
-```
+![clock](md_pic/clock.jpg)
 
+![alarm](md_pic/alarm.jpg)
 
+![timezone](md_pic/timezone.jpg)
 
-- Set Cs function. Because the screen, touch and SD card all use SPI interface. To prevent SPI conflicts, the manual SPI switch is set. Low is enable.
-
-```c++
-//SPI control
-#define SPI_ON_TFT digitalWrite(TFT_CS, LOW)
-#define SPI_OFF_TFT digitalWrite(TFT_CS, HIGH)
-#define SPI_ON_SD digitalWrite(SD_CS, LOW)
-#define SPI_OFF_SD digitalWrite(SD_CS, HIGH)
-#define STMPE_ON digitalWrite(STMPE_CS, LOW)
-#define STMPE_OFF digitalWrite(STMPE_CS, HIGH)
-```
-
-
-
-- Init SPI
-
-```c++
-SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI);
-```
-
+![mp3](md_pic/music.jpg)
