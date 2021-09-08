@@ -87,11 +87,15 @@ Some hardware test demos and a NTP clock + MP3 demo.
 **If you have any questions，such as how to install the development board, how to download the code, how to install the library. Please refer to :[Makerfabs_FAQ](https://github.com/Makerfabs/Makerfabs_FAQ)**
 
 - Install board : ESP32 .
+
+Must use ESP32 version 1.0.6.
+
+![](md_pic/esp32version.jpg)
+
 - Install library : Adafruit_GFX library.
 - Install library : Adafruit_ILI9341 library.
 - Install library : PCF8574_library
 - Install library : Adafruit_SGP30
-
 - Insert a Micro SD card into ESPlay Micro.
 - Upload codes, select "ESP32 Wrover Module" and "Huge APP"
 - Connect stereo to ESPlay Micro
